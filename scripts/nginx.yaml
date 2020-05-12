@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: install-nginx
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+      - name: installer
+        image: mikonos/installer
+        command:  ["/bin/bash", "-c"]
+        args:
+        - curl https://github.com/kyma-project/kyma/releases/download/1.12.0/kyma-installer-cluster.yaml
+        
+        - kubectl deploy --image=nginx nginx-app --port=80; 
+        - kubectl expose deployment nginx-app --port=8080 --name=nginx-http;  
+      restartPolicy: Never
